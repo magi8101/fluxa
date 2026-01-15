@@ -4,10 +4,12 @@ build-backend = "maturin"
 
 [project]
 name = "fluxa"
-version = "0.1.0"
+version = "0.1.1"
 description = "A high-performance template engine for Python written on top of minijinja"
-requires-python = ">=3.8"
-license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [
     { name = "magi8101" }
 ]
@@ -31,8 +33,11 @@ pydantic = ["pydantic>=2.0.0"]
 all = ["orjson>=3.9.0", "pydantic>=2.0.0"]
 
 [project.urls]
+Homepage = "https://github.com/magi8101/fluxa"
 Repository = "https://github.com/magi8101/fluxa"
+Documentation = "https://github.com/magi8101/fluxa#readme"
 "Issue Tracker" = "https://github.com/magi8101/fluxa/issues"
+Changelog = "https://github.com/magi8101/fluxa/releases"
 
 [tool.maturin]
 manifest-path = "fluxa/Cargo.toml"
