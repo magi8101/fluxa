@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | {{ blog.name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            color: #333;
+            background: #fafafa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: normal;
+        }
+
+        .article {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .article-meta span {
+            margin-right: 1rem;
+        }
+
+        .article-image {
+            width: 100%;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content h2 {
+            margin: 2rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #333;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #555;
+        }
+
+        .article-content code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .article-content pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .tags {
+            margin-top: 2rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #eee;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+            font-size: 0.85rem;
+            color: #555;
+            text-decoration: none;
+        }
+
+        .author-box {
+            display: flex;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .author-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .author-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .comments {
+            margin-top: 3rem;
+        }
+
+        .comments h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .comment {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .comment-author {
+            font-weight: bold;
+        }
+
+        .comment-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .comment-form {
+            margin-top: 2rem;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .comment-form button {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .related-posts {
+            margin-top: 3rem;
+        }
+
+        .related-posts h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .related-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .related-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .related-card-content {
+            padding: 1rem;
+        }
+
+        .related-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar {
+            margin-top: 2rem;
+        }
+
+        .sidebar-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .sidebar-section ul {
+            list-style: none;
+        }
+
+        .sidebar-section li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-section a {
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>{{ blog.name }}</h1>
+            <p>{{ blog.tagline }}</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <article class="article">
+            <header class="article-header">
+                <h1 class="article-title">{{ article.title }}</h1>
+                <div class="article-meta">
+                    <span>By {{ article.author.name }}</span>
+                    <span>{{ article.published_at }}</span>
+                    <span>{{ article.read_time }} min read</span>
+                    <span>{{ article.views }} views</span>
+                </div>
+            </header>
+
+            {% if article.featured_image %}
+            <img src="{{ article.featured_image }}" alt="{{ article.title }}" class="article-image">
+            {% endif %}
+
+            <div class="article-content">
+                {% for block in article.content_blocks %}
+                {% if block.type == 'paragraph' %}
+                <p>{{ block.text }}</p>
+                {% elif block.type == 'heading' %}
+                <h2>{{ block.text }}</h2>
+                {% elif block.type == 'blockquote' %}
+                <blockquote>{{ block.text }}</blockquote>
+                {% elif block.type == 'code' %}
+                <pre><code>{{ block.code }}</code></pre>
+                {% elif block.type == 'image' %}
+                <img src="{{ block.url }}" alt="{{ block.caption }}" style="width: 100%; border-radius: 8px;">
+                {% if block.caption %}
+                <p style="text-align: center; color: #666; font-size: 0.9rem;">{{ block.caption }}</p>
+                {% endif %}
+                {% elif block.type == 'list' %}
+                <ul>
+                    {% for item in block.list_items %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="tags">
+                {% for tag in article.tags %}
+                <a href="/tag/{{ tag | lower | replace(' ', '-') }}" class="tag">#{{ tag }}</a>
+                {% endfor %}
+            </div>
+
+            <div class="author-box">
+                <img src="{{ article.author.avatar }}" alt="{{ article.author.name }}" class="author-avatar">
+                <div class="author-info">
+                    <h3>{{ article.author.name }}</h3>
+                    <p>{{ article.author.bio }}</p>
+                    <div class="author-social">
+                        {% for social in article.author.social_links %}
+                        <a href="{{ social.url }}">{{ social.platform }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <section class="comments">
+            <h2>Comments ({{ comments | length }})</h2>
+
+            {% for comment in comments %}
+            <div class="comment" id="comment-{{ comment.id }}">
+                <div class="comment-header">
+                    <span class="comment-author">{{ comment.author }}</span>
+                    <span class="comment-date">{{ comment.created_at }}</span>
+                </div>
+                <p>{{ comment.text }}</p>
+                {% if comment.replies %}
+                <div style="margin-left: 2rem; margin-top: 1rem;">
+                    {% for reply in comment.replies %}
+                    <div class="comment" style="background: #f9f9f9;">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ reply.author }}</span>
+                            <span class="comment-date">{{ reply.created_at }}</span>
+                        </div>
+                        <p>{{ reply.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <form class="comment-form" action="/comments" method="POST">
+                <input type="hidden" name="article_id" value="{{ article.id }}">
+                <textarea name="comment" placeholder="Write a comment..."></textarea>
+                <button type="submit">Post Comment</button>
+            </form>
+        </section>
+
+        <section class="related-posts">
+            <h2>Related Articles</h2>
+            <div class="related-grid">
+                {% for post in related_posts %}
+                <a href="/article/{{ post.slug }}" class="related-card">
+                    <img src="{{ post.thumbnail }}" alt="{{ post.title }}">
+                    <div class="related-card-content">
+                        <h3>{{ post.title }}</h3>
+                        <p style="color: #666; font-size: 0.85rem;">{{ post.excerpt[:80] }}...</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.querySelector('.comment-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/api/comments', {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>

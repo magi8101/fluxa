@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_name }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ site_description }}{% endblock %}">
+    <link rel="stylesheet" href="/static/css/main.css">
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="{% block body_class %}default{% endblock %}">
+    <header class="header">
+        <nav class="navbar">
+            <a href="/" class="logo">{{ site_name }}</a>
+            <ul class="nav-menu">
+                {% for item in nav_items %}
+                <li class="nav-item{% if item.active %} active{% endif %}">
+                    <a href="{{ item.url }}">{{ item.label }}</a>
+                    {% if item.children %}
+                    <ul class="dropdown">
+                        {% for child in item.children %}
+                        <li><a href="{{ child.url }}">{{ child.label }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% if user %}
+            <div class="user-menu">
+                <span>Welcome, {{ user.name }}</span>
+                <a href="/logout">Logout</a>
+            </div>
+            {% else %}
+            <div class="auth-links">
+                <a href="/login">Login</a>
+                <a href="/register" class="btn btn-primary">Sign Up</a>
+            </div>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>{{ site_name }}</h4>
+                <p>{{ footer_text }}</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    {% for link in footer_links %}
+                    <li><a href="{{ link.url }}">{{ link.label }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: {{ contact_email }}</p>
+                <p>Phone: {{ contact_phone }}</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ current_year }} {{ site_name }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

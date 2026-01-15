@@ -1,0 +1,23 @@
+[package]
+name = "fluxa"
+version = "0.1.0"
+edition = "2021"
+
+# Fluxa - High-performance template engine (fork of MiniJinja)
+[lib]
+name = "fluxa_lowlevel"
+crate-type = ["cdylib"]
+
+[dependencies]
+minijinja = { version = "2.14.0", path = "../minijinja", features = ["loader", "json", "urlencode", "fuel", "preserve_order", "speedups", "custom_syntax", "loop_controls", "internal_safe_search"] }
+minijinja-contrib = { version = "2.14.0", path = "../minijinja-contrib", features = ["pycompat", "html_entities"] }
+pyo3 = { version = "0.27.0", features = ["extension-module", "serde", "abi3-py38"] }
+
+# Native async support
+pyo3-async-runtimes = { version = "0.27.0", features = ["tokio-runtime"] }
+tokio = { version = "1", features = ["rt-multi-thread", "time"] }
+
+[build-dependencies]
+pyo3-build-config = "0.27.0"
+
+

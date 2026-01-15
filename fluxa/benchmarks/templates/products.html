@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Products - {{ site_name }}{% endblock %}
+{% block description %}Browse our collection of {{ products|length }} products{% endblock %}
+{% block body_class %}products-page{% endblock %}
+
+{% block content %}
+<div class="products-container">
+    <aside class="filters-sidebar">
+        <h3>Filters</h3>
+
+        <div class="filter-group">
+            <h4>Categories</h4>
+            <ul class="filter-list">
+                {% for category in categories %}
+                <li>
+                    <label>
+                        <input type="checkbox" name="category" value="{{ category.id }}" {% if category.id in
+                            selected_categories %}checked{% endif %}>
+                        {{ category.name }} ({{ category.count }})
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="filter-group">
+            <h4>Price Range</h4>
+            <div class="price-inputs">
+                <input type="number" name="min_price" placeholder="Min" value="{{ min_price }}">
+                <span>-</span>
+                <input type="number" name="max_price" placeholder="Max" value="{{ max_price }}">
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h4>Rating</h4>
+            {% for rating in [5, 4, 3, 2, 1] %}
+            <label class="rating-filter">
+                <input type="radio" name="rating" value="{{ rating }}" {% if selected_rating==rating %}checked{% endif
+                    %}>
+                {% for star in range(rating) %}★{% endfor %}{% for star in range(5 - rating) %}☆{% endfor %}
+                & Up
+            </label>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </aside>
+
+    <section class="products-main">
+        <div class="products-header">
+            <h1>{{ page_title|default("All Products") }}</h1>
+            <div class="sort-options">
+                <label>Sort by:</label>
+                <select name="sort">
+                    <option value="popular" {% if sort=="popular" %}selected{% endif %}>Most Popular</option>
+                    <option value="newest" {% if sort=="newest" %}selected{% endif %}>Newest</option>
+                    <option value="price_low" {% if sort=="price_low" %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_high" {% if sort=="price_high" %}selected{% endif %}>Price: High to Low
+                    </option>
+                    <option value="rating" {% if sort=="rating" %}selected{% endif %}>Highest Rated</option>
+                </select>
+            </div>
+            <p class="results-count">Showing {{ products|length }} of {{ total_products }} products</p>
+        </div>
+
+        <div class="products-grid">
+            {% for product in products %}
+            <article class="product-card" data-product-id="{{ product.id }}">
+                <div class="product-image">
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
+                    {% if product.discount_percent > 0 %}
+                    <span class="discount-badge">-{{ product.discount_percent }}%</span>
+                    {% endif %}
+                    {% if not product.in_stock %}
+                    <div class="out-of-stock-overlay">Out of Stock</div>
+                    {% endif %}
+                </div>
+
+                <div class="product-info">
+                    <div class="product-category">{{ product.category }}</div>
+                    <h3 class="product-name">
+                        <a href="/products/{{ product.slug }}">{{ product.name }}</a>
+                    </h3>
+
+                    <div class="product-rating">
+                        {% for star in range(product.rating|int) %}
+                        <span class="star filled">★</span>
+                        {% endfor %}
+                        {% for star in range(5 - product.rating|int) %}
+                        <span class="star">☆</span>
+                        {% endfor %}
+                        <span class="review-count">({{ product.review_count }})</span>
+                    </div>
+
+                    <div class="product-price">
+                        {% if product.discount_percent > 0 %}
+                        <span class="original-price">${{ "%.2f"|format(product.original_price) }}</span>
+                        <span class="sale-price">${{ "%.2f"|format(product.price) }}</span>
+                        {% else %}
+                        <span class="current-price">${{ "%.2f"|format(product.price) }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="product-actions">
+                        {% if product.in_stock %}
+                        <button class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}">
+                            Add to Cart
+                        </button>
+                        {% else %}
+                        <button class="btn btn-secondary" disabled>Out of Stock</button>
+                        {% endif %}
+                        <button class="btn btn-icon wishlist-btn" data-product-id="{{ product.id }}">
+                            {% if product.id in user_wishlist %}♥{% else %}♡{% endif %}
+                        </button>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        {% if total_pages > 1 %}
+        <nav class="pagination">
+            {% if current_page > 1 %}
+            <a href="?page={{ current_page - 1 }}" class="page-link prev">← Previous</a>
+            {% endif %}
+
+            {% for page in range(1, total_pages + 1) %}
+            {% if page == current_page %}
+            <span class="page-link current">{{ page }}</span>
+            {% elif page == 1 or page == total_pages or (page >= current_page - 2 and page <= current_page + 2) %} <a
+                href="?page={{ page }}" class="page-link">{{ page }}</a>
+                {% elif page == current_page - 3 or page == current_page + 3 %}
+                <span class="page-ellipsis">...</span>
+                {% endif %}
+                {% endfor %}
+
+                {% if current_page < total_pages %} <a href="?page={{ current_page + 1 }}" class="page-link next">Next
+                    →</a>
+                    {% endif %}
+        </nav>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const productData = {{ products| tojson }};
+    console.log('Loaded', productData.length, 'products');
+</script>
+{% endblock %}

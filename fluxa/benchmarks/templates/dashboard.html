@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - {{ site_name }}{% endblock %}
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <aside class="dashboard-sidebar">
+        <div class="user-info">
+            <img src="{{ user.avatar_url }}" alt="{{ user.name }}" class="avatar">
+            <h3>{{ user.name }}</h3>
+            <p class="user-role">{{ user.role|title }}</p>
+        </div>
+
+        <nav class="dashboard-nav">
+            {% for section in dashboard_sections %}
+            <div class="nav-section">
+                <h4>{{ section.title }}</h4>
+                <ul>
+                    {% for item in section.menu_items %}
+                    <li class="{% if item.active %}active{% endif %}">
+                        <a href="{{ item.url }}">
+                            <span class="icon">{{ item.icon }}</span>
+                            {{ item.label }}
+                            {% if item.badge %}
+                            <span class="badge">{{ item.badge }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </nav>
+    </aside>
+
+    <main class="dashboard-main">
+        <header class="dashboard-header">
+            <h1>{{ page_title }}</h1>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="search" placeholder="Search..." value="{{ search_query }}">
+                </div>
+                <div class="notifications">
+                    <button class="notification-btn">
+                        🔔
+                        {% if unread_notifications > 0 %}
+                        <span class="notification-count">{{ unread_notifications }}</span>
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            {% for stat in stats %}
+            <div class="stat-card {{ stat.type }}">
+                <div class="stat-icon">{{ stat.icon }}</div>
+                <div class="stat-content">
+                    <h3 class="stat-value">
+                        {% if stat.format == "currency" %}
+                        ${{ stat.value|round(2) }}
+                        {% elif stat.format == "number" %}
+                        {{ stat.value|int }}
+                        {% elif stat.format == "percent" %}
+                        {{ stat.value }}%
+                        {% else %}
+                        {{ stat.value }}
+                        {% endif %}
+                    </h3>
+                    <p class="stat-label">{{ stat.label }}</p>
+                    {% if stat.change %}
+                    <p class="stat-change {% if stat.change > 0 %}positive{% else %}negative{% endif %}">
+                        {% if stat.change > 0 %}↑{% else %}↓{% endif %}
+                        {{ stat.change|abs }}% from last month
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+
+        <div class="dashboard-grid">
+            <section class="recent-orders card">
+                <div class="card-header">
+                    <h2>Recent Orders</h2>
+                    <a href="/orders" class="view-all">View All</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Products</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td class="order-id">#{{ order.id }}</td>
+                            <td class="customer">
+                                <img src="{{ order.customer.avatar }}" alt="" class="customer-avatar">
+                                <span>{{ order.customer.name }}</span>
+                            </td>
+                            <td class="products">
+                                {{ order.order_items|length }} item{% if order.order_items|length != 1 %}s{% endif %}
+                            </td>
+                            <td class="total">${{ "%.2f"|format(order.total) }}</td>
+                            <td class="status">
+                                <span class="status-badge status-{{ order.status|lower }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td class="date">{{ order.created_at }}</td>
+                            <td class="actions">
+                                <a href="/orders/{{ order.id }}" class="btn btn-sm">View</a>
+                                {% if order.status == "Pending" %}
+                                <button class="btn btn-sm btn-primary">Process</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="activity-feed card">
+                <div class="card-header">
+                    <h2>Recent Activity</h2>
+                </div>
+                <ul class="activity-list">
+                    {% for activity in activities %}
+                    <li class="activity-item">
+                        <div class="activity-icon {{ activity.type }}">
+                            {{ activity.icon }}
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">
+                                <strong>{{ activity.user }}</strong>
+                                {{ activity.action }}
+                                {% if activity.target %}
+                                <a href="{{ activity.target_url }}">{{ activity.target }}</a>
+                                {% endif %}
+                            </p>
+                            <time class="activity-time">{{ activity.time_ago }}</time>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="chart-section card">
+                <div class="card-header">
+                    <h2>Sales Overview</h2>
+                    <div class="chart-controls">
+                        <button class="{% if chart_period == 'week' %}active{% endif %}">Week</button>
+                        <button class="{% if chart_period == 'month' %}active{% endif %}">Month</button>
+                        <button class="{% if chart_period == 'year' %}active{% endif %}">Year</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div id="sales-chart" data-values="{{ chart_data|tojson }}"></div>
+                </div>
+            </section>
+
+            <section class="top-products card">
+                <div class="card-header">
+                    <h2>Top Products</h2>
+                </div>
+                <ul class="top-products-list">
+                    {% for product in top_products %}
+                    <li class="product-item">
+                        <img src="{{ product.image }}" alt="{{ product.name }}" class="product-thumb">
+                        <div class="product-details">
+                            <h4>{{ product.name }}</h4>
+                            <p class="product-sales">{{ product.sales }} sales</p>
+                        </div>
+                        <div class="product-revenue">
+                            ${{ product.revenue|round(2) }}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const dashboardData = {
+        stats: {{ stats| tojson }},
+    chartData: { { chart_data | tojson } },
+    orders: { { recent_orders | tojson } }
+    };
+</script>
+{% endblock %}

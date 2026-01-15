@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} - {{ site_name }}</title>
+    <style>
+        :root {
+            --primary-color: {
+                    {
+                    theme.primary_color
+                }
+            }
+
+            ;
+
+            --secondary-color: {
+                    {
+                    theme.secondary_color
+                }
+            }
+
+            ;
+
+            --bg-color: {
+                    {
+                    theme.background_color
+                }
+            }
+
+            ;
+
+            --text-color: {
+                    {
+                    theme.text_color
+                }
+            }
+
+            ;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: url('{{ hero_image }}') center/cover;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .product-rating {
+            display: flex;
+            gap: 0.25rem;
+            color: #ffc107;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer h3 {
+            margin-bottom: 1rem;
+        }
+
+        .footer ul {
+            list-style: none;
+        }
+
+        .footer li {
+            margin: 0.5rem 0;
+        }
+
+        .footer a {
+            color: #ccc;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="logo">{{ site_name }}</a>
+            <ul class="nav-links">
+                {% for link in nav_links %}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {% endfor %}
+            </ul>
+            <div class="user-actions">
+                {% if user %}
+                <span>Welcome, {{ user.name }}</span>
+                <a href="/cart" class="btn">Cart ({{ cart_count }})</a>
+                {% else %}
+                <a href="/login" class="btn">Sign In</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>{{ hero_title }}</h1>
+        <p>{{ hero_subtitle }}</p>
+        <a href="/shop" class="btn">Shop Now</a>
+    </section>
+
+    <main>
+        <section class="products-grid">
+            {% for product in products %}
+            <article class="product-card" data-id="{{ product.id }}">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                <div class="product-info">
+                    <h2 class="product-title">{{ product.name }}</h2>
+                    <p class="product-description">{{ product.description[:100] }}...</p>
+                    <div class="product-rating">
+                        {% for i in range(product.rating) %}
+                        <span>★</span>
+                        {% endfor %}
+                        {% for i in range(5 - product.rating) %}
+                        <span style="color: #ddd;">★</span>
+                        {% endfor %}
+                        <span class="review-count">({{ product.reviews_count }})</span>
+                    </div>
+                    <div class="product-pricing">
+                        {% if product.sale_price %}
+                        <span class="original-price" style="text-decoration: line-through; color: #999;">
+                            ${{ "%.2f" | format(product.price) }}
+                        </span>
+                        <span class="product-price">${{ "%.2f" | format(product.sale_price) }}</span>
+                        {% else %}
+                        <span class="product-price">${{ "%.2f" | format(product.price) }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-actions">
+                        {% if product.in_stock %}
+                        <button class="btn add-to-cart" data-product-id="{{ product.id }}">
+                            Add to Cart
+                        </button>
+                        {% else %}
+                        <button class="btn" disabled style="background: #ccc;">Out of Stock</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </section>
+
+        {% if featured_categories %}
+        <section class="categories" style="padding: 2rem;">
+            <h2>Shop by Category</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                {% for category in featured_categories %}
+                <a href="/category/{{ category.slug }}" class="category-card" style="
+                    background: url('{{ category.image }}') center/cover;
+                    padding: 3rem;
+                    border-radius: 8px;
+                    color: white;
+                    text-decoration: none;
+                    flex: 1;
+                    min-width: 200px;
+                ">
+                    <h3>{{ category.name }}</h3>
+                    <span>{{ category.product_count }} items</span>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <h3>{{ site_name }}</h3>
+                <p>{{ site_description }}</p>
+            </div>
+            <div>
+                <h3>Quick Links</h3>
+                <ul>
+                    {% for link in footer_links %}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h3>Contact</h3>
+                <ul>
+                    <li>{{ contact.email }}</li>
+                    <li>{{ contact.phone }}</li>
+                    <li>{{ contact.address }}</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Follow Us</h3>
+                <ul>
+                    {% for social in social_links %}
+                    <li><a href="{{ social.url }}">{{ social.platform }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #333;">
+            <p>&copy; {{ current_year }} {{ site_name }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const productId = this.dataset.productId;
+                fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_id: productId, quantity: 1 })
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.textContent = 'Added!';
+                            setTimeout(() => this.textContent = 'Add to Cart', 2000);
+                        }
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>

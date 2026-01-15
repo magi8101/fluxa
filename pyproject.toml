@@ -1,0 +1,54 @@
+[build-system]
+requires = ["maturin>=1.5"]
+build-backend = "maturin"
+
+[project]
+name = "fluxa"
+version = "0.1.0"
+description = "A high-performance template engine for Python written on top of minijinja"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+    { name = "magi8101" }
+]
+maintainers = [
+    { name = "magi8101" }
+]
+keywords = ["Jinja2", "minijinja", "template-engine", "templating", "async"]
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Environment :: Web Environment",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Text Processing :: Markup :: HTML",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+fast = ["orjson>=3.9.0"]
+pydantic = ["pydantic>=2.0.0"]
+all = ["orjson>=3.9.0", "pydantic>=2.0.0"]
+
+[project.urls]
+Repository = "https://github.com/magi8101/fluxa"
+"Issue Tracker" = "https://github.com/magi8101/fluxa/issues"
+
+[tool.maturin]
+manifest-path = "fluxa/Cargo.toml"
+module-name = "fluxa._lowlevel"
+python-source = "fluxa/python"
+strip = true
+
+[tool.pyright]
+include = ["fluxa/python/**/*.pyi"]
+exclude = ["fluxa/python/**/*.py"]
+typeCheckingMode = "strict"
+pythonVersion = "3.13"
+
+[dependency-groups]
+dev = [
+    "maturin>=1.8.6",
+    "pyright>=1.1.401",
+    "pytest>=8.3.5",
+]
