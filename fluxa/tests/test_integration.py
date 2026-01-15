@@ -1,7 +1,7 @@
 """Test file for Jin Pydantic and orjson integration"""
 
-from minijinja import Environment
-from minijinja._lowlevel import has_orjson, has_pydantic, orjson_dumps, orjson_loads
+from fluxa import Environment
+from fluxa._lowlevel import has_orjson, has_pydantic, orjson_dumps, orjson_loads
 from pydantic import BaseModel
 
 print("=== Jin Integration Test ===")

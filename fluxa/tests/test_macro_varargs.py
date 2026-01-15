@@ -1,6 +1,6 @@
 """Test macro varargs and kwargs for Jinja2 compatibility"""
 
-from minijinja import Environment
+from fluxa import Environment
 
 env = Environment()
 

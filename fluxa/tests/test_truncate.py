@@ -1,5 +1,5 @@
 """Test truncate filter compatibility with Jinja2."""
-from minijinja import Environment
+from fluxa import Environment
 
 env = Environment()
 

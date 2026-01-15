@@ -1,6 +1,6 @@
 """Test Pydantic context validation."""
 from pydantic import BaseModel, ValidationError
-from minijinja import validate_context, has_pydantic, Environment
+from fluxa import validate_context, has_pydantic, Environment
 
 
 class UserContext(BaseModel):

@@ -1,6 +1,6 @@
 """Test script for new filters"""
 
-from minijinja import Environment
+from fluxa import Environment
 
 env = Environment()
 

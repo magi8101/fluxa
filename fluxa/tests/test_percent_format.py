@@ -1,6 +1,6 @@
 """Test string % formatting for Jinja2 compatibility"""
 
-from minijinja import Environment
+from fluxa import Environment
 
 env = Environment()
 
