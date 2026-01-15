@@ -90,14 +90,16 @@ jobs:
           cd fluxa
           python -m pytest tests/ -v --ignore=tests/test_jinja2_compat.py || true
 
-  # Publish to PyPI on tag push
+  # Publish to PyPI on main push (skips if version exists)
   publish:
     name: Publish to PyPI
     needs: [build-wheels, build-sdist, test]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.ref == 'refs/heads/main'
     
     steps:
+      - uses: actions/checkout@v4
+      
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -109,4 +111,4 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
-
+          skip-existing: true
